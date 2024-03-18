@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
-from ..models import Data
+from data.models import Data
 from .serializers import DataSerializer
 
 
