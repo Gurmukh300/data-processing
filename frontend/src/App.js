@@ -6,7 +6,7 @@ const krl = process.env.REACT_APP_REST_API_URL
 function App() {
   const [datas, setData] = useState([]);
 
-  const fetchData = async (e) => {
+  const fetchData = async () => {
    
     try {
       const result = await axios.get(`${krl}`);
@@ -17,6 +17,24 @@ function App() {
       console.error("Error fetching data:", error);
     }
   };
+
+  const postData = async () => {
+    const name = "test z"
+    const birthdate = "2000-09-09"
+    const score = 5
+    const grade = "L"
+    const body = {name,birthdate,score,grade}
+    const response = await axios.post(krl, body)
+    console.log(response)
+    return response.data
+  }
+
+  const handleSendData = async()=> {
+    const newData = await postData()
+    if (newData) {
+      setData(prevState => [...prevState, newData])
+    }
+  }
 
   useEffect(() => {
     fetchData();
@@ -34,7 +52,7 @@ function App() {
              {/* Add more properties as needed */}
            </div>
          ))}
-      
+      <button onClick={handleSendData}>Send</button>
      </div>
     </>
   );
