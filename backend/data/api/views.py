@@ -11,7 +11,8 @@ from data.models import Data
 from .serializers import DataSerializer
 
 class DataViewSet(ModelViewSet):
-    queryset = Data.objects.all().order_by('-id')
+    # queryset = Data.objects.all().order_by('-id')
+    queryset = Data.objects.all()
     serializer_class = DataSerializer
     
     @action(detail=False, methods=["POST"])
