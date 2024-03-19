@@ -5,7 +5,7 @@ from data.models import Data
 
 
 
-class TestViews(APITestCase):
+class TestDataViewSet(APITestCase):
     def test_upload_valid_csv(self):
         # Create a temporary CSV file with valid data
         csv_data = "name,birthdate,score,grade\nAlice,1990-01-01,90,A\nBob,1991-02-02,75,B"
