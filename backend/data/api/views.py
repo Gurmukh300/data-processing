@@ -1,12 +1,5 @@
-# from rest_framework.viewsets import ModelViewSet
-# from data.models import Data
-# from .serializers import DataSerializer
 
-
-# class DataViewSet(ModelViewSet):
-#     queryset = Data.objects.all()
-#     serializer_class = DataSerializer
-
+from datetime import date
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -18,7 +11,7 @@ from data.models import Data
 from .serializers import DataSerializer
 
 class DataViewSet(ModelViewSet):
-    queryset = Data.objects.all()
+    queryset = Data.objects.all().order_by('-id')
     serializer_class = DataSerializer
     
     @action(detail=False, methods=["POST"])
@@ -40,9 +33,12 @@ class DataViewSet(ModelViewSet):
             
             # Infer and convert data types
             for col in df.columns:
+                
                 if col == 'score':
                     # Replace 'Not Available' with a default value
                     df[col] = df[col].replace('Not Available', 0)
+                    # Replace empty values with 0
+                    df[col] = df[col].fillna(0)
 
                 df_converted = pd.to_numeric(df[col], errors='coerce')
                 if not df_converted.isna().all():
