@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
-const krl = process.env.REACT_APP_REST_API_URL;
+import DataFetcher from './DataFetcher';
 
 const CsvFileUploader = () => {
   const [file, setFile] = useState(null);
   const [uploadError, setUploadError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage] = useState(10); // Set the number of rows per page
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
-    setUploadError(null); // Reset upload error when a new file is selected
+    setUploadError(null);
   };
 
   const handleUpload = async (e) => {
@@ -17,14 +18,14 @@ const CsvFileUploader = () => {
 
     if (!file) {
       setUploadError('Please select a CSV file');
-      return; // Exit function if no file is selected
+      return;
     }
 
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      const response = await axios.post(`${krl}upload_csv/`, formData);
+      const response = await axios.post(`${process.env.REACT_APP_REST_API_URL}upload_csv/`, formData);
       console.log(response.data);
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -49,6 +50,57 @@ const CsvFileUploader = () => {
       >
         Upload
       </button>
+
+      <h2 className="text-xl font-semibold mt-8 mb-4">Data Table</h2>
+      <DataFetcher>
+        {({ data, loading, error }) => (
+          <>
+            {loading && <p>Loading...</p>}
+            {error && <p>Error: {error.message}</p>}
+            <table className="table-auto w-full">
+              <thead>
+                <tr>
+                  <th className="border px-4 py-2">Name</th>
+                  <th className="border px-4 py-2">Birthdate</th>
+                  <th className="border px-4 py-2">Score</th>
+                  <th className="border px-4 py-2">Grade</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data
+                  .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+                  .map((row, index) => (
+                    <tr key={index}>
+                      <td className="border px-4 py-2">{row.name}</td>
+                      <td className="border px-4 py-2">{row.birthdate}</td>
+                      <td className="border px-4 py-2">{row.score}</td>
+                      <td className="border px-4 py-2">{row.grade}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-blue-600"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === Math.ceil(data.length / rowsPerPage)}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+              >
+                Next
+              </button>
+            </div>
+            <div className="text-center mt-4">
+              Page {currentPage} of {Math.ceil(data.length / rowsPerPage)}
+            </div>
+          </>
+        )}
+      </DataFetcher>
     </div>
   );
 };
