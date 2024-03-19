@@ -1,12 +1,11 @@
-from django.test import TestCase
 
-# Create your tests here.
-import tempfile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase
 from data.models import Data
 
-class UploadCSVTestCase(APITestCase):
+
+
+class TestViews(APITestCase):
     def test_upload_valid_csv(self):
         # Create a temporary CSV file with valid data
         csv_data = "name,birthdate,score,grade\nAlice,1990-01-01,90,A\nBob,1991-02-02,75,B"
@@ -30,5 +29,3 @@ class UploadCSVTestCase(APITestCase):
 
         # Assert that no data is saved to the database
         self.assertEqual(Data.objects.count(), 0)
-
-    # Add more test cases here for different scenarios (missing columns, incorrect date format, etc.)
