@@ -42,6 +42,7 @@ function App() {
     <>
       <div className="App">
         <br/>
+        <br/>
         <form onSubmit={handleSubmit}>
           <input type="file" onChange={handleFileChange} />
           <button type="submit">Upload</button>
@@ -50,8 +51,12 @@ function App() {
           datas.map((item, index) => (
             <div key={index}>
               {/* Render each property of the item */}
+              <br/>
               <p>ID: {item.id}</p>
               <p>Name: {item.name}</p>
+              <p>Birthdate: {item.birthdate}</p>
+              <p>Score: {item.score}</p>
+              <p>Grade: {item.grade}</p>
               {/* Add more properties as needed */}
             </div>
           ))}
