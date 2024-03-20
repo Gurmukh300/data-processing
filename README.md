@@ -33,3 +33,11 @@ python manage.py migrate
 
 # Start the Django server
 python manage.py runserver
+
+
+# Before running the frontend, make sure to set the REACT_APP_REST_API_URL environment variable in the .env file to connect the frontend with the backend.
+
+dotenv
+
+# .env file
+REACT_APP_REST_API_URL="http://127.0.0.1:8000/api/data/"
