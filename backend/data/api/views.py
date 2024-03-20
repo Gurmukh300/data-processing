@@ -4,15 +4,16 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
-import csv
+import numpy as np 
+
 import pandas as pd
 
 from data.models import Data
 from .serializers import DataSerializer
 
 class DataViewSet(ModelViewSet):
-    # queryset = Data.objects.all().order_by('-id')
-    queryset = Data.objects.all()
+    queryset = Data.objects.all().order_by('-id')
+    # queryset = Data.objects.all()
     serializer_class = DataSerializer
     
     @action(detail=False, methods=["POST"])
@@ -28,9 +29,6 @@ class DataViewSet(ModelViewSet):
             # Read CSV file into pandas DataFrame
             df = pd.read_csv(file)
             df.columns = df.columns.str.lower()
-
-            # Debug statement to print out adjusted column names
-            print("Adjusted column names:", df.columns)
             
             # Infer and convert data types
             for col in df.columns:
@@ -40,6 +38,12 @@ class DataViewSet(ModelViewSet):
                     df[col] = df[col].replace('Not Available', 0)
                     # Replace empty values with 0
                     df[col] = df[col].fillna(0)
+
+                
+                if col == 'grade':
+                    # Replace empty values with a default grade or handle them as needed
+                    df[col] = df[col].fillna('NaN')  # Replace NaN or empty values with 'A' or any default grade
+
 
                 df_converted = pd.to_numeric(df[col], errors='coerce')
                 if not df_converted.isna().all():
@@ -52,6 +56,13 @@ class DataViewSet(ModelViewSet):
                     pass
                 if len(df[col].unique()) / len(df[col]) < 0.5:
                     df[col] = pd.Categorical(df[col])
+
+             # Validate DataFrame columns
+            if not {'name', 'birthdate', 'score', 'grade'}.issubset(df.columns):
+                return Response({"error": "Missing required columns"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Drop rows with all null values
+            df.dropna(how='all', inplace=True)
 
             # Save DataFrame to database
             instances = []
