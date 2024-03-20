@@ -6,7 +6,6 @@ from data.api.urls import data_router
 router = DefaultRouter()
 router.registry.extend(data_router.registry)
 
-# Other URL patterns...
 urlpatterns = [
     # Include the URLs registered with data_router
     path('', include(router.urls)),

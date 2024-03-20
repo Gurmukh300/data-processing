@@ -1,7 +1,7 @@
 # Data Processing
 
 A web application for processing CSV and displaying data, featuring Pandas data type inference and 
-conversion on the Django backend and a React frontend for user interaction.
+conversion on the Django backend and a React with Tailwind frontend for user interaction.
 
 ## Getting Started
 
